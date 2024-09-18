@@ -1,21 +1,27 @@
 const organization = "hack24ADO";
-const project = "skype";
-const team = "skype Team";
+const project = "Skype";
+const projectId = "88b7809a-433c-46d1-ae39-f4b4739811f9" //TODO fetch from context later
+const team = "Skype Team";
+const teamId = "a42c17c7-f721-4ac9-8913-1cb2db8ebd3c"; //TODO fetch from context later
 const iterationPath = "your-project\\Sprint 1"; // Replace with your iteration
+const token = "43g73fnijre7bwyltr2gygitzajshwn4n5u5drby4i4jozbykbma" //TODO use managed identity later
 
 async function getWorkItemsForBacklog() {
+    const areaPaths = await getAreaPathsForTeam(teamId);
+    const areaPathsQuery = areaPaths.map(path => `'${path}'`).join(', ');
     const workItemQuery = {
         query: `SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AssignedTo], [System.State] 
                 FROM WorkItems 
+                WHERE [System.AreaPath] IN (${areaPathsQuery})
                 ORDER BY [Microsoft.VSTS.Common.Priority] ASC`
     };
 
     try {
-        const response = await fetch(`https://dev.azure.com/${organization}/${project}/_apis/wit/wiql?api-version=6.0`, {
+        const response = await fetch(`https://dev.azure.com/${organization}/${project}/_apis/wit/wiql?api-version=7.1-preview.2`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa(':' + 'ccdtegvmj43rzbcljkp5s3lsfibydb27qodpqwu5egelrp3itbna')
+                'Authorization': 'Basic ' + btoa(':' + `${token}`)
             },
             body: JSON.stringify(workItemQuery)
         });
@@ -33,12 +39,29 @@ async function getWorkItemDetails(ids) {
         const detailsResponse = await fetch(`https://dev.azure.com/${organization}/${project}/_apis/wit/workitems?ids=${idsString}&api-version=6.0`, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa(':' + 'ccdtegvmj43rzbcljkp5s3lsfibydb27qodpqwu5egelrp3itbna')
+                'Authorization': 'Basic ' + btoa(':' + `${token}`)
             }
         });
 
         const details = await detailsResponse.json();
         return details.value;
+    } catch (error) {
+        console.error("Error fetching work item details:", error);
+    }
+}
+
+async function getAreaPathsForTeam(teamId){
+    try {
+        const detailsResponse = await fetch(`https://dev.azure.com/${organization}/${projectId}/${teamId}/_apis/work/teamsettings/teamfieldvalues?api-version=7.1-preview.1`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa(':' + `${token}`)
+            }
+        });
+
+        const details = await detailsResponse.json();
+        const areas =  details.values.map(v => v.value);
+        return areas;
     } catch (error) {
         console.error("Error fetching work item details:", error);
     }

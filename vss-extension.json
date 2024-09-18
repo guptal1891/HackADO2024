@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "TaskAssistant",
     "publisher": "HackSept2024",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "name": "TaskAssistant",
     "description": "ADO TaskAssistant  extension",
     "public": false,
@@ -32,6 +32,14 @@
     "files": [
         {
             "path": "my-hub.html",
+            "addressable": true
+        },
+        {
+            "path": "styles.css",
+            "addressable": true
+        },
+        {
+            "path": "app.js",
             "addressable": true
         },
         {
