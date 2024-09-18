@@ -1,0 +1,43 @@
+{
+    "manifestVersion": 1,
+    "id": "TaskAssistant",
+    "publisher": "HackSept2024",
+    "version": "1.0.4",
+    "name": "TaskAssistant",
+    "description": "ADO TaskAssistant  extension",
+    "public": false,
+    "categories": ["Azure Boards"],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "scopes": [
+        "vso.work"
+    ],
+    "contributions": [
+        {
+            "id": "my-hub",
+            "type": "ms.vss-web.tab",
+            "targets": [
+                "ms.vss-work-web.product-backlog-tabs",
+                "ms.vss-work-web.query-tabs"
+            ],
+            "properties": {
+                "name": "Task Assistant",
+                "uri": "my-hub.html"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "my-hub.html",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/azure-devops-extension-sdk",
+            "addressable": true,
+            "packagePath": "lib"
+        }
+    ]
+}
